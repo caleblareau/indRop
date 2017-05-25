@@ -1,0 +1,22 @@
+Package: indRop
+Type: Package
+Title: Package for indrops functionality for Buenrostrolab
+Version: 0.1.0
+Date: 2017-05-25
+Authors@R: c(
+    person("Caleb", "Lareau", email = "caleblareau@g.harvard.edu", role = c("aut", "cre"))
+    )
+Maintainer: Caleb Lareau <caleblareau@g.harvard.edu>
+Author: Caleb Lareau [aut, cre]
+Description: Basic functions for handling and working with indrops data in R
+Imports:
+    methods
+License: MIT + file LICENSE
+LazyData: TRUE
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat
+VignetteBuilder: knitr
+RoxygenNote: 5.0.1
+
