@@ -22,7 +22,6 @@ data1 <- "S1.counts.tsv"
 data2 <- "S2.counts.tsv"
 sm <- readIndrop(c(data1,data2))
 seuratObject <- new("seurat", raw.data = sm)
-
 ```
 
 ### Export
@@ -37,7 +36,6 @@ outFolder <- "output1"
 
 sm <- readIndrop(c(data1,data2))
 export10X(sm, outFolder)
-
 ```
 
 ## Other
