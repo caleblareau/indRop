@@ -1,4 +1,4 @@
 library(testthat)
-library(scTools)
+library(indRop)
 
-test_check("scTools")
+test_check("indRop")
