@@ -38,5 +38,6 @@ sm <- readIndrop(c(data1,data2))
 export10X(sm, outFolder)
 ```
 
-## Other
-This package is designed to plug a gap between the indrops pipeline and Seurat. 
+## Description
+This package is designed to plug a gap between the [indrops pipeline](https://github.com/indrops/indrops)
+and [Seurat](https://github.com/satijalab/seurat). 
