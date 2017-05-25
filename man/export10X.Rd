@@ -24,5 +24,11 @@ This function wil write files to the disk though.
 exports the object into the files that 10X data typically comes in.
 }
 \examples{
+file1 <- paste(system.file("extdata", package = "indRop"),
+"small1.counts.tsv", sep = "/")
+file2 <- paste(system.file("extdata", package = "indRop"),
+"small2.counts.tsv", sep = "/")
+dat <- readIndrop(c(file1,file2))
+
 
 }

@@ -24,5 +24,13 @@ inside an S3 object if other parameters are set to TRUE
 that were the output of indrops pre-processing pipeline (python package).
 }
 \examples{
+file1 <- paste(system.file("extdata", package = "indRop"),
+"small1.counts.tsv", sep = "/")
+file2 <- paste(system.file("extdata", package = "indRop"),
+"small2.counts.tsv", sep = "/")
+dat <- readIndrop(c(file1,file2))
+# now make a Seurat object
+# library(Seurat)
+# seuratObject <- new("seurat", raw.data = dat) 
 
 }

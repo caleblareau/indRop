@@ -14,8 +14,15 @@ NULL
 #' @import Matrix
 #' @import data.table
 #' @examples
+#' file1 <- paste(system.file("extdata", package = "indRop"),
+#' "small1.counts.tsv", sep = "/")
+#' file2 <- paste(system.file("extdata", package = "indRop"),
+#' "small2.counts.tsv", sep = "/")
+#' dat <- readIndrop(c(file1,file2))
+#' # now make a Seurat object
+#' # library(Seurat)
+#' # seuratObject <- new("seurat", raw.data = dat) 
 #' 
-
 #' @export
 setGeneric(name = "readIndrop", def = function(paths, whichFile = FALSE)
     standardGeneric("readIndrop"))
@@ -24,8 +31,55 @@ setGeneric(name = "readIndrop", def = function(paths, whichFile = FALSE)
 setMethod("readIndrop", signature("character", "ANY"),
           definition = function(paths, whichFile = FALSE) {
 
-          stopifnot(method %in% c("euclidean", "pearson"))
+          # Make sure files exist
+          badImport <- lapply(paths, function(file){
+            stopifnot(file.exists(file))
+          })
           
+          # Read in files
+          allData <- lapply(paths, function(file){
+            d <- data.frame(data.table::fread(file))
+            barcodes <- d[,1]
+            genes <- colnames(d)[-1]
+            matrix <- Matrix(data.matrix(d[,-1]))
+            list(barcodes = barcodes, genes = genes, dat = t(matrix))
+          })
+          
+          # Process the gene lists
+          if( length(allData) > 1){
+            allGenes <- lapply(allData, function(run) run[["genes"]])
+            
+             # Check that gene lists match; exit out if not
+            if(length(unique(allGenes)) > 1){
+              stop("Cannot import samples as they have different gene lists (columns)")
+            }
+            geneVector <- allGenes[[1]]
+            
+          } else {
+            geneVector <- allData[[1]][["genes"]]
+          }
+
+          # Process the sample names
+          if( length(allData) > 1){
+            allBarcodes <- lapply(allData, function(run) run[["barcodes"]])
+            barcodeVector <- unlist(allBarcodes, recursive = TRUE, use.names = TRUE)
+            
+            # Check that sample names (barcodes) are all unique; if not, modify then slightly
+            if(sum(table(barcodeVector) == 1) != length(barcodeVector)){
+              message("Found matching barcode IDs; changing the name to verify uniqueness")
+              l <- sapply(allBarcodes, length)
+              preVec <- unlist(sapply(1:length(l), function(i){ rep(as.character(i), l[i])}))
+              barcodeVector <- paste0("file", preVec, "_", barcodeVector)
+            }
+          } else {
+             barcodeVector <- allData[[1]][["barcodes"]]
+          }
+          
+          # Process the data matrices; update names; return
+          full_data <- do.call(cbind, lapply(allData, function(d){ d[["dat"]]}))
+          colnames(full_data) <- barcodeVector
+          rownames(full_data) <- geneVector
+          return(full_data)
 })
 
 
@@ -41,9 +95,15 @@ setMethod("readIndrop", signature("character", "ANY"),
 #' This function wil write files to the disk though. 
 #' 
 #' @import Matrix
+#' @import methods
 #' @examples
+#' file1 <- paste(system.file("extdata", package = "indRop"),
+#' "small1.counts.tsv", sep = "/")
+#' file2 <- paste(system.file("extdata", package = "indRop"),
+#' "small2.counts.tsv", sep = "/")
+#' dat <- readIndrop(c(file1,file2))
 #' 
-
+#' 
 #' @export
 setGeneric(name = "export10X", def = function(obj, folder)
     standardGeneric("export10X"))
@@ -55,5 +115,5 @@ setMethod("export10X", signature("ANY", "character"),
           # https://stackoverflow.com/questions/4216753/check-existence-of-directory-and-create-if-doesnt-exist
           dir.create(file.path(folder), showWarnings = FALSE)
             
-          
+          Matrix::writeMM()
 })
