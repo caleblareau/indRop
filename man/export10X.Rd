@@ -29,6 +29,6 @@ file1 <- paste(system.file("extdata", package = "indRop"),
 file2 <- paste(system.file("extdata", package = "indRop"),
 "small2.counts.tsv", sep = "/")
 dat <- readIndrop(c(file1,file2))
-
+export10X(dat, "dataFolder")
 
 }

@@ -96,13 +96,14 @@ setMethod("readIndrop", signature("character", "ANY"),
 #' 
 #' @import Matrix
 #' @import methods
+#' @importFrom utils write.table
 #' @examples
 #' file1 <- paste(system.file("extdata", package = "indRop"),
 #' "small1.counts.tsv", sep = "/")
 #' file2 <- paste(system.file("extdata", package = "indRop"),
 #' "small2.counts.tsv", sep = "/")
 #' dat <- readIndrop(c(file1,file2))
-#' 
+#' export10X(dat, "dataFolder")
 #' 
 #' @export
 setGeneric(name = "export10X", def = function(obj, folder)
@@ -111,9 +112,19 @@ setGeneric(name = "export10X", def = function(obj, folder)
 #' @rdname export10X
 setMethod("export10X", signature("ANY", "character"),
           definition = function(obj, folder) {
-          
-          # https://stackoverflow.com/questions/4216753/check-existence-of-directory-and-create-if-doesnt-exist
-          dir.create(file.path(folder), showWarnings = FALSE)
             
-          Matrix::writeMM()
-})
+            # https://stackoverflow.com/questions/4216753/check-existence-of-directory-and-create-if-doesnt-exist
+            dir.create(file.path(folder), showWarnings = FALSE)
+            
+            # make data.frames
+            geneDF <- data.frame(genes1 = rownames(obj), genes2 = rownames(obj))
+            sampleDF <- data.frame(samples = colnames(obj))
+            
+            # write files
+            Matrix::writeMM(obj, file = paste0(file.path(folder), "/", "matrix.mtx"))
+            write.table(geneDF, file = paste0(file.path(folder), "/", "genes.tsv"),
+                        quote = FALSE, sep = "\t", col.names = FALSE, row.names = FALSE)
+            write.table(sampleDF, file = paste0(file.path(folder), "/", "barcodes.tsv"),
+                        quote = FALSE, sep = "\t", col.names = FALSE, row.names = FALSE)
+            
+          })
